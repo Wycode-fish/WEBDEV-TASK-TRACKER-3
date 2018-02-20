@@ -15,6 +15,7 @@ defmodule TaskTrackerWeb.TaskController do
   end
 
   def create(conn, %{"task" => task_params}) do
+    task_params = Map.put(task_params, "start_time", :os.system_time(:second));
     case Tracker.create_task(task_params) do
       {:ok, task} ->
         conn
