@@ -31,10 +31,23 @@ defmodule TaskTrackerWeb.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
-    resources "/users", UserController
-    resources "/tasks", TaskController
+
+    get "/users/*path", PageController, :index
+    get "/tasks/*path", PageController, :index
+    get "/users/:id", PageController, :index
+    get "/login", PageController, :index
+    get "/register", PageController, :index
+    # resources "/users", UserController
+    # resources "/tasks", TaskController
     post "/session", SessionController, :create
     delete "/session", SessionController, :delete
+  end
+
+  scope "/api/v1", TaskTrackerWeb do
+    pipe_through :api
+    resources "/tasks", TaskController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit]
+    post "/token", TokenController, :create
   end
 
   # Other scopes may use custom stacks.

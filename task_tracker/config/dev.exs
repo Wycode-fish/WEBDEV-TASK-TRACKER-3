@@ -51,7 +51,7 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :task_tracker, TaskTracker.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "eason",
+  username: "wangyichen",
   password: "",
   database: "task_tracker_dev",
   hostname: "localhost",

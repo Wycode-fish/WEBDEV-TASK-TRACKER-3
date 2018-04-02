@@ -1,68 +1,59 @@
 defmodule TaskTrackerWeb.TaskController do
   use TaskTrackerWeb, :controller
 
-  alias TaskTracker.Tracker
-  alias TaskTracker.Tracker.Task
+  alias TaskTracker.Tasks
+  alias TaskTracker.Tasks.Task
+
+  action_fallback TaskTrackerWeb.FallbackController
 
   def index(conn, _params) do
-    tasks = Tracker.list_tasks()
-    render(conn, "index.html", tasks: tasks)
+    tasks = Tasks.list_tasks()
+    render(conn, "index.json", tasks: tasks)
   end
 
-  def new(conn, _params) do
-    changeset = Tracker.change_task(%Task{})
-    render(conn, "new.html", changeset: changeset)
-  end
+  def create(conn, %{"task" => task_params, "token" => token}) do
+      IO.puts "****************"
+      IO.inspect task_params;
+      IO.puts "..........."
+      IO.inspect token;
+      {:ok, user_id} = Phoenix.Token.verify(conn, "auth token", token, max_age: 86400)
+      IO.puts "..........."
+      IO.inspect user_id;
+      if task_params["creator_id"] != user_id do
+        IO.inspect({:bad_match, task_params["user_id"], user_id})
+        raise "hax!"
+      end
 
-  def create(conn, %{"task" => task_params}) do
-    task_params = Map.put(task_params, "start_time", :os.system_time(:second));
-    case Tracker.create_task(task_params) do
-      {:ok, task} ->
+      with {:ok, %Task{} = task} <- Tasks.create_task(task_params) do
         conn
-        |> put_flash(:info, "Task created successfully.")
-        |> redirect(to: task_path(conn, :show, task))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
-    end
+        |> put_status(:created)
+        |> put_resp_header("location", task_path(conn, :show, task))
+        |> render("show.json", task: task)
+      end
   end
 
   def show(conn, %{"id" => id}) do
-    task = Tracker.get_task!(id)
-    
-    render(conn, "show.html", task: task)
+    task = Tasks.get_task!(id)
+    render(conn, "show.json", task: task)
   end
 
-  def edit(conn, %{"id" => id}) do
-    task = Tracker.get_task!(id)
-    changeset = Tracker.change_task(task)
-    render(conn, "edit.html", task: task, changeset: changeset)
-  end
-
-  def update(conn, %{"id" => id, "task" => task_params}) do
-    task = Tracker.get_task!(id)
-    isFinish = Map.get(task, :is_finish);
-    if not isFinish do
-      IO.puts "haha";
-      IO.puts Integer.to_string(:os.system_time(:second));
-      task_params = Map.put(task_params, "end_time", :os.system_time(:second));
-      IO.puts Integer.to_string(task|>Map.get(:end_time));
-    end
-    case Tracker.update_task(task, task_params) do
-      {:ok, task} ->
-        conn
-        |> put_flash(:info, "Task updated successfully.")
-        |> redirect(to: task_path(conn, :show, task))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", task: task, changeset: changeset)
+  def update(conn, %{"id" => id, "data" => task_params}) do
+    IO.puts "before.>>>>>>>>>"
+    IO.inspect id
+    task = Tasks.get_task!(id)
+    IO.puts "<<<<<<<<<<<<<"
+    IO.inspect task
+    IO.puts "<<<<<<<<<<<<<"
+    IO.inspect task_params
+    with {:ok, %Task{} = task} <- Tasks.update_task(task, task_params) do
+      render(conn, "show.json", task: task)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    task = Tracker.get_task!(id)
-    {:ok, _task} = Tracker.delete_task(task)
-
-    conn
-    |> put_flash(:info, "Task deleted successfully.")
-    |> redirect(to: task_path(conn, :index))
+    task = Tasks.get_task!(id)
+    with {:ok, %Task{}} <- Tasks.delete_task(task) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end

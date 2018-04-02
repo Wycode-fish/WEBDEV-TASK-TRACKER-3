@@ -19,3 +19,12 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+import $ from 'jquery';
+import store from './store';
+import api from './api';
+import tracker_init from "./cs/tracker";
+$(function() {
+  api.request_tasks();
+  api.request_users();
+  tracker_init(store);
+});
