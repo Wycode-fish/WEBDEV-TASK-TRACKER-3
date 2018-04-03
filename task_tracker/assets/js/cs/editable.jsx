@@ -12,7 +12,6 @@ function Editable(params) {
   // console.log("$$$$$$", params);
 
   function update(ev) {
-    console.log("^^^^^^^");
     let tgt = $(ev.target);
     let data = {};
     data[tgt.attr('name')] = tgt.val();
@@ -28,7 +27,6 @@ function Editable(params) {
   }
 
   function open_edit_task() {
-    console.log("***************", params.task.id);
     let data = Object.assign({}, params.task);
     data['fid'] = params.task.id;
     let action1 = {
@@ -42,7 +40,6 @@ function Editable(params) {
       editing: true,
     };
     params.dispatch(action);
-    console.log(params.task.id);
   }
 
   function quit_edit() {
@@ -62,7 +59,6 @@ function Editable(params) {
     data['assignee_id'] = params.form.assignee_id;
     data['title'] = params.form.title;
     data['description'] = params.form.description;
-    console.log("_____________task-id", params.task.id);
     data['id'] = params.form.fid;
     api.update_task(data);
     quit_edit();
@@ -80,7 +76,7 @@ function Editable(params) {
   let end_time = (task.is_finish)?toDateTime(task.end_time):" - ";
 
   let users = _.map(params.users, (uu) => <option key={uu.id} value={uu.id}>{uu.name}</option>);
-
+  users.unshift(<option>please select</option>);
   // if (params.)
   return <div>
     <Card>

@@ -37,6 +37,7 @@ function TaskForm(params) {
         data: {},
       }
       params.dispatch(action2);
+      alert("New Task Has Been Created Successfully.");
     }
     else {
       let data = {};
@@ -51,6 +52,7 @@ function TaskForm(params) {
   }
 
   let users = _.map(params.users, (uu) => <option key={uu.id} value={uu.id}>{uu.name}</option>);
+  users.unshift(<option>please select</option>);
 
   return <div style={ {padding: "4ex"} }>
     <h2>New Task</h2>

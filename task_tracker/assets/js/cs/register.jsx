@@ -54,7 +54,11 @@ function Register(params) {
 
   function isEmailValid() {
     let valid = "success";
-    //...
+    let flag = true;
+     _.each(params.users, (uu)=>{
+      flag = flag && $('.register-email').val()!=uu.email;
+    });
+    if (!flag) valid="Email has existed.";
     return valid;
   }
 
@@ -76,7 +80,7 @@ function Register(params) {
       <h2 style={{fontFamily: "cursive"}}>NEW USER</h2>
       <FormGroup>
         <Label for="email">EMAIL</Label>
-        <Input type="text" name="email" value={params.register.email} onChange={update}/>
+        <Input type="text" name="email" className="register-email" value={params.register.email} onChange={update}/>
       </FormGroup>
       <FormGroup>
         <Label for="name">NAME</Label>
