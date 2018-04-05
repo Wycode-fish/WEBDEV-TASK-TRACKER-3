@@ -94,18 +94,14 @@ let Tracker = connect((state) => state)((props) => {
     <Router>
       <div>
         <Nav />
-        
+
         <Route path="/login" exact={true} render={() =>
           <div>
             <Login users={props.users} />
           </div>
         } />
 
-      <Route path="/register" exact={true} render={() =>
-          <div>
-            <Register users={props.users} />
-          </div>
-        } />
+      <Route path="/register" exact={true} component={Register}/>
 
         <Route path="/" exact={true} render={() =>
           <div>

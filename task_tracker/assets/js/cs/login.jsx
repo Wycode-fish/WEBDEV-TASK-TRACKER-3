@@ -36,6 +36,7 @@ function Login(params) {
   function isUserValid() {
     let valid = "success";
     let flag = false;
+    console.log("params.users", params.users);
      _.each(params.users, (uu)=>{
       flag = flag || $('.input-email').val()==uu.email;
     });

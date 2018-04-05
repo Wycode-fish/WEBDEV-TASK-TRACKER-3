@@ -32,7 +32,8 @@ function Register(params) {
 
     if (valid=="success") {
       api.submit_register(params.register);
-      return <Redirect to="/login" push={true}/>
+      alert("register succes.");
+      params.history.push('/login');
     }
     else {
       let data = {};
@@ -104,7 +105,8 @@ function Register(params) {
 
 function state2props(state) {
   return { register: state.register,
-          token: state.token
+          token: state.token,
+          users: state.users,
         };
 }
 

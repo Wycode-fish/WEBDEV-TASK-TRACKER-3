@@ -77,7 +77,7 @@ class TrackerServer {
           success: (resp) => {
             store.dispatch({
               type: 'ADD_USER',
-              token: resp,
+              users: resp.data,
             });
           },
         });
