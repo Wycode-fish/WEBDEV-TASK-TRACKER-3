@@ -78,6 +78,8 @@ defmodule TaskTracker.Tasks do
     {:ok, task} = task
     |> Task.changeset(attrs)
     |> Repo.update()
+    task_id = Map.get(task, :id);
+    task = get_task!(task_id);
     {:ok, Repo.preload(task, :assignee)|> Repo.preload(:creator)}
   end
 
